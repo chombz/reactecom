@@ -40,7 +40,7 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.headers.post['Accept'] = 'application/json';
 
 
-axios.defaults.withCredentials = false;
+axios.defaults.withCredentials = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000';
 
 // Add request interceptor to include auth token
 axios.interceptors.request.use(
