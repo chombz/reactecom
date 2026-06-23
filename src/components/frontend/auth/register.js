@@ -51,10 +51,7 @@ function Register()
 
         try
         {
-            // First get CSRF cookie
-            await axios.get('/sanctum/csrf-cookie');
-
-            // Then make the registration request
+            // Send registration request to the backend
             const response = await axios.post('/api/register', data);
 
             if (response.data.status === 200)
