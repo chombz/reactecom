@@ -29,66 +29,62 @@ function Login()
             password: loginInput.password,
         };
 
-        // For Sanctum SPA auth, we must get a CSRF cookie first.
-        axios.get('/sanctum/csrf-cookie').then(response => 
+        axios.post('/api/login', data).then(res =>
         {
-            axios.post('/api/login', data).then(res => 
+            if (res.data.status === 200) 
             {
-                if (res.data.status === 200) 
-                {
-                    // Store token and user data in local storage
-                    localStorage.setItem('auth_token', res.data.token);
-                    localStorage.setItem('auth_user', JSON.stringify(res.data.user));
+                // Store token and user data in local storage
+                localStorage.setItem('auth_token', res.data.token);
+                localStorage.setItem('auth_user', JSON.stringify(res.data.user));
 
-                    Swal.fire
-                        ({
-                            title: "Success",
-                            text: res.data.message,
-                            icon: "success",
-                            timer: 2000,
-                            showConfirmButton: false
-                        });
+                Swal.fire
+                    ({
+                        title: "Success",
+                        text: res.data.message,
+                        icon: "success",
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
 
-                    // ** This is the critical part for redirection **
-                    if (res.data.role === 'admin') 
-                    {
-                        // Check role from response
-                        navigate('/admin/dashboard');
-                    }
-                    else 
-                    {
-                        navigate('/'); // Redirect regular users to the homepage
-                    }
-                }
-                else if (res.data.status === 401) 
+                // ** This is the critical part for redirection **
+                if (res.data.role === 'admin') 
                 {
-                    // Handle invalid credentials
-                    Swal.fire
-                        ({
-                            title: "Login Failed",
-                            text: res.data.message,
-                            icon: "warning"
-                        });
+                    // Check role from response
+                    navigate('/admin/dashboard');
                 }
                 else 
                 {
-                    // Handle validation errors (e.g., email or password format is wrong)
-                    setLoginInput
-                        ({
-                            ...loginInput, error_list: res.data.validation_errors || {}
-                        });
+                    navigate('/'); // Redirect regular users to the homepage
                 }
-            }).catch(error => 
+            }
+            else if (res.data.status === 401) 
             {
-                // This catches network errors or other issues with the request
-                console.error("An unexpected login error occurred:", error);
+                // Handle invalid credentials
                 Swal.fire
                     ({
-                        title: "Login Error",
-                        text: "An unexpected error occurred. Please check your connection and try again.",
-                        icon: "error",
+                        title: "Login Failed",
+                        text: res.data.message,
+                        icon: "warning"
                     });
-            });
+            }
+            else 
+            {
+                // Handle validation errors (e.g., email or password format is wrong)
+                setLoginInput
+                    ({
+                        ...loginInput, error_list: res.data.validation_errors || {}
+                    });
+            }
+        }).catch(error => 
+        {
+            // This catches network errors or other issues with the request
+            console.error("An unexpected login error occurred:", error);
+            Swal.fire
+                ({
+                    title: "Login Error",
+                    text: "An unexpected error occurred. Please check your connection and try again.",
+                    icon: "error",
+                });
         });
     };
 

@@ -37,13 +37,11 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 //console_logs
 console.log("REACT_APP_API_URL =", process.env.REACT_APP_API_URL);
 
-// Axios configuration
-axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+// Set the base URL for axios requests
+axios.defaults.baseURL = process.env.REACT_APP_API_URL || 'http://127.0.0.1:8000';
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.headers.post['Accept'] = 'application/json';
 
-
-axios.defaults.baseURL = process.env.REACT_APP_API_URL;
 
 // Add request interceptor to include auth token
 axios.interceptors.request.use(
